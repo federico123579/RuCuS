@@ -17,7 +17,7 @@ impl CubeModel {
         }
     }
 
-    fn right_clockwise(&mut self) {
+    pub fn right_clockwise(&mut self) {
         let mut temp = self.cube_elements[2][0][0];
         self.cube_elements[2][0][0] = self.cube_elements[2][0][2];
         self.cube_elements[2][0][2] = self.cube_elements[2][2][2];
@@ -31,7 +31,7 @@ impl CubeModel {
         self.cube_elements[2][1][0] = temp;
     }
 
-    fn right_counter_clockwise(&mut self) {
+    pub fn right_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[2][0][0];
         self.cube_elements[2][0][0] = self.cube_elements[2][2][0];
         self.cube_elements[2][2][0] = self.cube_elements[2][2][2];
@@ -45,7 +45,7 @@ impl CubeModel {
         self.cube_elements[2][1][2] = temp;
     }
 
-    fn left_clockwise(&mut self) {
+    pub fn left_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[0][2][2];
@@ -59,7 +59,7 @@ impl CubeModel {
         self.cube_elements[0][1][2] = temp;
     }
 
-    fn left_counter_clockwise(&mut self) {
+    pub fn left_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[0][0][2];
         self.cube_elements[0][0][2] = self.cube_elements[0][2][2];
@@ -73,7 +73,7 @@ impl CubeModel {
         self.cube_elements[0][1][0] = temp;
     }
 
-    fn up_clockwise(&mut self) {
+    pub fn up_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[2][2][0];
         self.cube_elements[2][2][0] = self.cube_elements[2][2][2];
@@ -87,7 +87,7 @@ impl CubeModel {
         self.cube_elements[1][2][2] = temp;
     }
 
-    fn up_counter_clockwise(&mut self) {
+    pub fn up_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[0][2][2];
         self.cube_elements[0][2][2] = self.cube_elements[2][2][2];
@@ -101,7 +101,7 @@ impl CubeModel {
         self.cube_elements[1][2][0] = temp;
     }
 
-    fn down_clockwise(&mut self) {
+    pub fn down_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[0][0][2];
         self.cube_elements[0][0][2] = self.cube_elements[2][0][2];
@@ -115,7 +115,7 @@ impl CubeModel {
         self.cube_elements[1][0][0] = temp;
     }
 
-    fn down_counter_clockwise(&mut self) {
+    pub fn down_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[2][0][0];
         self.cube_elements[2][0][0] = self.cube_elements[2][0][2];
@@ -129,7 +129,7 @@ impl CubeModel {
         self.cube_elements[1][0][2] = temp;
     }
 
-    fn front_clockwise(&mut self) {
+    pub fn front_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[2][0][0];
         self.cube_elements[2][0][0] = self.cube_elements[2][2][0];
@@ -143,7 +143,7 @@ impl CubeModel {
         self.cube_elements[1][2][0] = temp;
     }
 
-    fn front_counter_clockwise(&mut self) {
+    pub fn front_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[2][2][0];
@@ -157,7 +157,7 @@ impl CubeModel {
         self.cube_elements[1][0][0] = temp;
     }
 
-    fn back_clockwise(&mut self) {
+    pub fn back_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][2];
         self.cube_elements[0][0][2] = self.cube_elements[0][2][2];
         self.cube_elements[0][2][2] = self.cube_elements[2][2][2];
@@ -171,7 +171,7 @@ impl CubeModel {
         self.cube_elements[1][0][2] = temp;
     }
 
-    fn back_counter_clockwise(&mut self) {
+    pub fn back_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][2];
         self.cube_elements[0][0][2] = self.cube_elements[2][0][2];
         self.cube_elements[2][0][2] = self.cube_elements[2][2][2];
