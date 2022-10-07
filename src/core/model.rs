@@ -73,7 +73,7 @@ impl CubeModel {
         self.cube_elements[0][1][0] = temp;
     }
 
-    fn top_clockwise(&mut self) {
+    fn up_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[2][2][0];
         self.cube_elements[2][2][0] = self.cube_elements[2][2][2];
@@ -87,7 +87,7 @@ impl CubeModel {
         self.cube_elements[1][2][2] = temp;
     }
 
-    fn top_counter_clockwise(&mut self) {
+    fn up_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][2][0];
         self.cube_elements[0][2][0] = self.cube_elements[0][2][2];
         self.cube_elements[0][2][2] = self.cube_elements[2][2][2];
@@ -101,7 +101,7 @@ impl CubeModel {
         self.cube_elements[1][2][0] = temp;
     }
 
-    fn bottom_clockwise(&mut self) {
+    fn down_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[0][0][2];
         self.cube_elements[0][0][2] = self.cube_elements[2][0][2];
@@ -115,7 +115,7 @@ impl CubeModel {
         self.cube_elements[1][0][0] = temp;
     }
 
-    fn bottom_counter_clockwise(&mut self) {
+    fn down_counter_clockwise(&mut self) {
         let mut temp = self.cube_elements[0][0][0];
         self.cube_elements[0][0][0] = self.cube_elements[2][0][0];
         self.cube_elements[2][0][0] = self.cube_elements[2][0][2];
@@ -351,9 +351,9 @@ mod tests {
         }
 
         #[test]
-        fn top_clockwise() {
+        fn up_clockwise() {
             let mut cube = load_solved_cube();
-            cube.top_clockwise();
+            cube.up_clockwise();
             assert_eq!(cube.cube_elements[0][2][0], CubeElement::WhiteBlueOrange);
             assert_eq!(cube.cube_elements[0][2][1], CubeElement::WhiteBlue);
             assert_eq!(cube.cube_elements[0][2][2], CubeElement::WhiteRedBlue);
@@ -366,9 +366,9 @@ mod tests {
         }
 
         #[test]
-        fn top_counter_clockwise() {
+        fn up_counter_clockwise() {
             let mut cube = load_solved_cube();
-            cube.top_counter_clockwise();
+            cube.up_counter_clockwise();
             assert_eq!(cube.cube_elements[0][2][0], CubeElement::WhiteGreenRed);
             assert_eq!(cube.cube_elements[0][2][1], CubeElement::WhiteGreen);
             assert_eq!(cube.cube_elements[0][2][2], CubeElement::WhiteOrangeGreen);
@@ -381,9 +381,9 @@ mod tests {
         }
 
         #[test]
-        fn bottom_clockwise() {
+        fn down_clockwise() {
             let mut cube = load_solved_cube();
-            cube.bottom_clockwise();
+            cube.down_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowGreenRed);
             assert_eq!(cube.cube_elements[0][0][1], CubeElement::YellowGreen);
             assert_eq!(cube.cube_elements[0][0][2], CubeElement::YellowOrangeGreen);
@@ -396,9 +396,9 @@ mod tests {
         }
 
         #[test]
-        fn bottom_counter_clockwise() {
+        fn down_counter_clockwise() {
             let mut cube = load_solved_cube();
-            cube.bottom_counter_clockwise();
+            cube.down_counter_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowBlueOrange);
             assert_eq!(cube.cube_elements[0][0][1], CubeElement::YellowBlue);
             assert_eq!(cube.cube_elements[0][0][2], CubeElement::YellowRedBlue);
