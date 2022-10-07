@@ -187,7 +187,10 @@ impl Display for CubeModel {
         for i in 0..3 {
             for j in 0..3 {
                 for k in 0..3 {
-                    let s = format!("{:4}", self.cube_elements[i][j][k].to_string().replace("-", ""));
+                    let s = format!(
+                        "{:4}",
+                        self.cube_elements[i][j][k].to_string().replace("-", "")
+                    );
                     result.push_str(&s);
                 }
                 result.push_str("\n");
@@ -266,9 +269,9 @@ impl Display for CubeElement {
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
-    use loaders::{CubeLoader, CubeTextLoader};
     use super::*;
+    use loaders::{CubeLoader, CubeTextLoader};
+    use std::path::PathBuf;
 
     fn load_solved_cube() -> CubeModel {
         // get the path of the file

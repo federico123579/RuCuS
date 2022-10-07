@@ -1,10 +1,9 @@
-use crate::core::{CubeModel, CubeElement};
+use crate::core::{CubeElement, CubeModel};
 use std::{fs::read_to_string, path::Path};
 
 pub trait CubeLoader {
     fn to_model(self) -> CubeModel;
 }
-
 
 #[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
 enum TileColor {
@@ -36,7 +35,8 @@ impl CubeElementType {
     }
 
     fn get_sorted_tiles(&self, tiles: &Vec<TileColor>) -> Vec<TileColor> {
-        let mut sorted_tiles = self.get_tiles_indexes()
+        let mut sorted_tiles = self
+            .get_tiles_indexes()
             .iter()
             .map(|i| tiles[*i])
             .collect::<Vec<TileColor>>();
@@ -46,16 +46,26 @@ impl CubeElementType {
 
     fn compose_element(&self, tiles: &Vec<TileColor>) -> CubeElement {
         let tiles = self.get_sorted_tiles(tiles);
-        
+
         if let Self::Vertix(_, _, _) = self {
             match tiles.as_slice() {
-                [TileColor::White, TileColor::Orange, TileColor::Green] => CubeElement::WhiteOrangeGreen,
-                [TileColor::White, TileColor::Orange, TileColor::Blue] => CubeElement::WhiteBlueOrange,
+                [TileColor::White, TileColor::Orange, TileColor::Green] => {
+                    CubeElement::WhiteOrangeGreen
+                }
+                [TileColor::White, TileColor::Orange, TileColor::Blue] => {
+                    CubeElement::WhiteBlueOrange
+                }
                 [TileColor::White, TileColor::Green, TileColor::Red] => CubeElement::WhiteGreenRed,
                 [TileColor::White, TileColor::Red, TileColor::Blue] => CubeElement::WhiteRedBlue,
-                [TileColor::Orange, TileColor::Green, TileColor::Yellow] => CubeElement::YellowOrangeGreen,
-                [TileColor::Orange, TileColor::Blue, TileColor::Yellow] => CubeElement::YellowBlueOrange,
-                [TileColor::Green, TileColor::Red, TileColor::Yellow] => CubeElement::YellowGreenRed,
+                [TileColor::Orange, TileColor::Green, TileColor::Yellow] => {
+                    CubeElement::YellowOrangeGreen
+                }
+                [TileColor::Orange, TileColor::Blue, TileColor::Yellow] => {
+                    CubeElement::YellowBlueOrange
+                }
+                [TileColor::Green, TileColor::Red, TileColor::Yellow] => {
+                    CubeElement::YellowGreenRed
+                }
                 [TileColor::Red, TileColor::Blue, TileColor::Yellow] => CubeElement::YellowRedBlue,
                 _ => panic!("Invalid vertix"),
             }
@@ -94,19 +104,55 @@ impl CubeElementType {
 /// CubeTextLoader map of elements and indexes of tile array.
 const CTL_MAP: [[[CubeElementType; 3]; 3]; 3] = [
     [
-        [CubeElementType::Vertix(6, 24, 42), CubeElementType::Edge(25, 39), CubeElementType::Vertix(26, 33, 36)],
-        [CubeElementType::Edge(3, 43), CubeElementType::Face(40), CubeElementType::Edge(34, 37)],
-        [CubeElementType::Vertix(0, 44, 51), CubeElementType::Edge(41, 48), CubeElementType::Vertix(35, 38, 45)],
+        [
+            CubeElementType::Vertix(6, 24, 42),
+            CubeElementType::Edge(25, 39),
+            CubeElementType::Vertix(26, 33, 36),
+        ],
+        [
+            CubeElementType::Edge(3, 43),
+            CubeElementType::Face(40),
+            CubeElementType::Edge(34, 37),
+        ],
+        [
+            CubeElementType::Vertix(0, 44, 51),
+            CubeElementType::Edge(41, 48),
+            CubeElementType::Vertix(35, 38, 45),
+        ],
     ],
     [
-        [CubeElementType::Edge(7, 21), CubeElementType::Face(22), CubeElementType::Edge(23, 30)],
-        [CubeElementType::Face(4), CubeElementType::Kernel, CubeElementType::Face(31)],
-        [CubeElementType::Edge(1, 52), CubeElementType::Face(49), CubeElementType::Edge(32, 46)],
+        [
+            CubeElementType::Edge(7, 21),
+            CubeElementType::Face(22),
+            CubeElementType::Edge(23, 30),
+        ],
+        [
+            CubeElementType::Face(4),
+            CubeElementType::Kernel,
+            CubeElementType::Face(31),
+        ],
+        [
+            CubeElementType::Edge(1, 52),
+            CubeElementType::Face(49),
+            CubeElementType::Edge(32, 46),
+        ],
     ],
     [
-        [CubeElementType::Vertix(8, 15, 18), CubeElementType::Edge(16, 19), CubeElementType::Vertix(17, 20, 27)],
-        [CubeElementType::Edge(5, 12), CubeElementType::Face(13), CubeElementType::Edge(14, 28)],
-        [CubeElementType::Vertix(2, 9, 53), CubeElementType::Edge(10, 50), CubeElementType::Vertix(11, 29, 47)],
+        [
+            CubeElementType::Vertix(8, 15, 18),
+            CubeElementType::Edge(16, 19),
+            CubeElementType::Vertix(17, 20, 27),
+        ],
+        [
+            CubeElementType::Edge(5, 12),
+            CubeElementType::Face(13),
+            CubeElementType::Edge(14, 28),
+        ],
+        [
+            CubeElementType::Vertix(2, 9, 53),
+            CubeElementType::Edge(10, 50),
+            CubeElementType::Vertix(11, 29, 47),
+        ],
     ],
 ];
 
@@ -138,7 +184,7 @@ impl CubeLoader for CubeTextLoader {
     fn to_model(self) -> CubeModel {
         let mut tile_colors = Vec::with_capacity(54);
         let mut lines = self.text.lines();
-        
+
         // from formatted text to tile_colors 1D array
         for _ in 0..6 {
             for _ in 0..3 {
@@ -158,11 +204,7 @@ impl CubeLoader for CubeTextLoader {
             }
         }
 
-        let cube_elements = CTL_MAP
-            .map(|x|
-                x.map(|y|
-                    y.map(|z|
-                        z.compose_element(&tile_colors))));
+        let cube_elements = CTL_MAP.map(|x| x.map(|y| y.map(|z| z.compose_element(&tile_colors))));
 
         CubeModel { cube_elements }
     }
