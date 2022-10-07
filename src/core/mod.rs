@@ -286,7 +286,7 @@ mod tests {
         use super::*;
 
         #[test]
-        fn test_right_clockwise() {
+        fn right_clockwise() {
             let mut cube = load_solved_cube();
             cube.right_clockwise();
             assert_eq!(cube.cube_elements[2][0][0], CubeElement::YellowOrangeGreen);
@@ -301,7 +301,7 @@ mod tests {
         }
 
         #[test]
-        fn test_right_counter_clockwise() {
+        fn right_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.right_counter_clockwise();
             assert_eq!(cube.cube_elements[2][0][0], CubeElement::WhiteBlueOrange);
@@ -316,7 +316,7 @@ mod tests {
         }
 
         #[test]
-        fn test_left_clockwise() {
+        fn left_clockwise() {
             let mut cube = load_solved_cube();
             cube.left_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::WhiteRedBlue);
@@ -331,7 +331,7 @@ mod tests {
         }
 
         #[test]
-        fn test_left_counter_clockwise() {
+        fn left_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.left_counter_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowGreenRed);
@@ -346,7 +346,7 @@ mod tests {
         }
 
         #[test]
-        fn test_top_clockwise() {
+        fn top_clockwise() {
             let mut cube = load_solved_cube();
             cube.top_clockwise();
             assert_eq!(cube.cube_elements[0][2][0], CubeElement::WhiteBlueOrange);
@@ -361,7 +361,7 @@ mod tests {
         }
 
         #[test]
-        fn test_top_counter_clockwise() {
+        fn top_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.top_counter_clockwise();
             assert_eq!(cube.cube_elements[0][2][0], CubeElement::WhiteGreenRed);
@@ -376,7 +376,7 @@ mod tests {
         }
 
         #[test]
-        fn test_bottom_clockwise() {
+        fn bottom_clockwise() {
             let mut cube = load_solved_cube();
             cube.bottom_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowGreenRed);
@@ -391,7 +391,7 @@ mod tests {
         }
 
         #[test]
-        fn test_bottom_counter_clockwise() {
+        fn bottom_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.bottom_counter_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowBlueOrange);
@@ -406,7 +406,7 @@ mod tests {
         }
 
         #[test]
-        fn test_front_clockwise() {
+        fn front_clockwise() {
             let mut cube = load_solved_cube();
             cube.front_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowBlueOrange);
@@ -421,7 +421,7 @@ mod tests {
         }
 
         #[test]
-        fn test_front_counter_clockwise() {
+        fn front_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.front_counter_clockwise();
             assert_eq!(cube.cube_elements[0][0][0], CubeElement::WhiteRedBlue);
@@ -436,7 +436,7 @@ mod tests {
         }
 
         #[test]
-        fn test_back_clockwise() {
+        fn back_clockwise() {
             let mut cube = load_solved_cube();
             cube.back_clockwise();
             assert_eq!(cube.cube_elements[0][0][2], CubeElement::WhiteGreenRed);
@@ -451,7 +451,7 @@ mod tests {
         }
 
         #[test]
-        fn test_back_counter_clockwise() {
+        fn back_counter_clockwise() {
             let mut cube = load_solved_cube();
             cube.back_counter_clockwise();
             assert_eq!(cube.cube_elements[0][0][2], CubeElement::YellowOrangeGreen);
@@ -463,6 +463,12 @@ mod tests {
             assert_eq!(cube.cube_elements[2][0][2], CubeElement::WhiteOrangeGreen);
             assert_eq!(cube.cube_elements[2][1][2], CubeElement::WhiteGreen);
             assert_eq!(cube.cube_elements[2][2][2], CubeElement::WhiteGreenRed);
+        }
+        
+        #[test]
+        fn print() {
+            let cube = load_solved_cube();
+            println!("{}", cube);
         }
     }
 }

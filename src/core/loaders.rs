@@ -236,8 +236,34 @@ mod tests {
     }
 
     #[test]
-    fn test_solved_cube_print() {
+    fn solved_cube_loaded_from_file() {
         let cube = load_solved_cube();
-        println!("{}", cube);
+        assert_eq!(cube.cube_elements[0][0][0], CubeElement::YellowRedBlue);
+        assert_eq!(cube.cube_elements[0][0][1], CubeElement::YellowRed);
+        assert_eq!(cube.cube_elements[0][0][2], CubeElement::YellowGreenRed);
+        assert_eq!(cube.cube_elements[0][1][0], CubeElement::RedBlue);
+        assert_eq!(cube.cube_elements[0][1][1], CubeElement::Red);
+        assert_eq!(cube.cube_elements[0][1][2], CubeElement::RedGreen);
+        assert_eq!(cube.cube_elements[0][2][0], CubeElement::WhiteRedBlue);
+        assert_eq!(cube.cube_elements[0][2][1], CubeElement::WhiteRed);
+        assert_eq!(cube.cube_elements[0][2][2], CubeElement::WhiteGreenRed);
+        assert_eq!(cube.cube_elements[1][0][0], CubeElement::YellowBlue);
+        assert_eq!(cube.cube_elements[1][0][1], CubeElement::Yellow);
+        assert_eq!(cube.cube_elements[1][0][2], CubeElement::YellowGreen);
+        assert_eq!(cube.cube_elements[1][1][0], CubeElement::Blue);
+        assert_eq!(cube.cube_elements[1][1][1], CubeElement::Kernel);
+        assert_eq!(cube.cube_elements[1][1][2], CubeElement::Green);
+        assert_eq!(cube.cube_elements[1][2][0], CubeElement::WhiteBlue);
+        assert_eq!(cube.cube_elements[1][2][1], CubeElement::White);
+        assert_eq!(cube.cube_elements[1][2][2], CubeElement::WhiteGreen);
+        assert_eq!(cube.cube_elements[2][0][0], CubeElement::YellowBlueOrange);
+        assert_eq!(cube.cube_elements[2][0][1], CubeElement::YellowOrange);
+        assert_eq!(cube.cube_elements[2][0][2], CubeElement::YellowOrangeGreen);
+        assert_eq!(cube.cube_elements[2][1][0], CubeElement::OrangeBlue);
+        assert_eq!(cube.cube_elements[2][1][1], CubeElement::Orange);
+        assert_eq!(cube.cube_elements[2][1][2], CubeElement::OrangeGreen);
+        assert_eq!(cube.cube_elements[2][2][0], CubeElement::WhiteBlueOrange);
+        assert_eq!(cube.cube_elements[2][2][1], CubeElement::WhiteOrange);
+        assert_eq!(cube.cube_elements[2][2][2], CubeElement::WhiteOrangeGreen);
     }
 }
