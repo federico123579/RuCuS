@@ -108,6 +108,6 @@ impl Heuristic for CubeState {
     fn heuristic(&self) -> f64 {
         // self.expected_move_distance()
         // self.manhattan_distance()
-        (self.manhattan_distance() + self.expected_move_distance()) / 2.0
+        self.manhattan_distance().max(self.expected_move_distance())
     }
 }

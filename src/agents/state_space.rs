@@ -7,8 +7,8 @@ use enum_iterator::all;
 use std::{cmp::Reverse, collections::BinaryHeap, collections::HashSet};
 
 // const STATE_SPACE_MEMORY_BOUND: f64 = 1e4;
-const STATE_SPACE_BOUND: f64 = 1e7;
-const W: f64 = 2.0;
+const STATE_SPACE_BOUND: f64 = 1e5;
+const W: f64 = 1.0;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CubeState {
@@ -139,21 +139,21 @@ impl StateSpace {
         // let mut visited = Vec::new();
         // let state_bound = STATE_SPACE_MEMORY_BOUND / size_of::<CubeState>() as f64;
 
-        // if self.frontier.len() > (STATE_SPACE_BOUND * 2.0) as usize {
-        //     let state_bound = STATE_SPACE_BOUND;
-        //     let mut state_remaining = state_bound as usize;
-        //     let old_front = self.frontier.clone();
-        //     self.frontier = BinaryHeap::with_capacity(state_remaining);
-        //     old_front.into_sorted_vec()
-        //         .iter()
-        //         .rev()
-        //         .for_each(|Reverse(state)| {
-        //             if state_remaining > 0 {
-        //                 self.frontier.push(Reverse(state.clone()));
-        //                 state_remaining -= 1;
-        //             }
-        //         });
-        // }
+        if self.frontier.len() > (STATE_SPACE_BOUND * 2.0) as usize {
+            let state_bound = STATE_SPACE_BOUND;
+            let mut state_remaining = state_bound as usize;
+            let old_front = self.frontier.clone();
+            self.frontier = BinaryHeap::with_capacity(state_remaining);
+            old_front.into_sorted_vec()
+                .iter()
+                .rev()
+                .for_each(|Reverse(state)| {
+                    if state_remaining > 0 {
+                        self.frontier.push(Reverse(state.clone()));
+                        state_remaining -= 1;
+                    }
+                });
+        }
 
         // while let Some(Reverse(state)) = self.frontier.pop() {
         //     if !visited.contains(&state) {
