@@ -669,7 +669,7 @@
 											"top": 252,
 											"width": 125.00439453125,
 											"height": 13,
-											"text": "CubeElements"
+											"text": "CubeElement"
 										},
 										{
 											"_type": "LabelView",
@@ -4482,7 +4482,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "CubeElements",
+					"name": "CubeElement",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",

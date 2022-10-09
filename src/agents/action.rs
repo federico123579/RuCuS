@@ -1,8 +1,8 @@
 use crate::core::{CubeElement, CubeLoader, CubeModel};
-use enum_iterator::{all, Sequence};
+use enum_iterator::Sequence;
 
-#[derive(Clone, Copy, PartialEq, Eq, Sequence)]
-enum Actions {
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Sequence)]
+pub enum Actions {
     U,
     UC,
     D,
@@ -17,7 +17,7 @@ enum Actions {
     LC,
 }
 
-trait Actionable {
+pub trait Actionable {
     fn apply_action(&mut self, action: Actions);
 }
 
@@ -37,32 +37,5 @@ impl Actionable for CubeModel {
             Actions::L => self.left_clockwise(),
             Actions::LC => self.left_counter_clockwise(),
         }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct CubeState {
-    model: CubeModel,
-}
-
-impl CubeState {
-    fn from_model(model: CubeModel) -> Self {
-        Self { model }
-    }
-
-    fn from_loader(loader: impl CubeLoader) -> Self {
-        Self {
-            model: CubeModel::from_loader(loader),
-        }
-    }
-
-    fn actions(&self) -> Vec<Actions> {
-        all::<Actions>().collect()
-    }
-}
-
-impl Actionable for CubeState {
-    fn apply_action(&mut self, action: Actions) {
-        self.model.apply_action(action);
     }
 }

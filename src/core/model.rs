@@ -1,6 +1,36 @@
 use std::fmt::Display;
 use super::loaders::CubeLoader;
 
+pub const SOLVED_INDEX_MAP: [((usize, usize, usize), CubeElement); 27] = [
+    ((0,0,0), CubeElement::YellowRedBlue),
+    ((0,0,1), CubeElement::YellowRed),
+    ((0,0,2), CubeElement::YellowGreenRed),
+    ((0,1,0), CubeElement::RedBlue),
+    ((0,1,1), CubeElement::Red),
+    ((0,1,2), CubeElement::RedGreen),
+    ((0,2,0), CubeElement::WhiteRedBlue),
+    ((0,2,1), CubeElement::WhiteRed),
+    ((0,2,2), CubeElement::WhiteGreenRed),
+    ((1,0,0), CubeElement::YellowBlue),
+    ((1,0,1), CubeElement::Yellow),
+    ((1,0,2), CubeElement::YellowGreen),
+    ((1,1,0), CubeElement::Blue),
+    ((1,1,1), CubeElement::Kernel),
+    ((1,1,2), CubeElement::Green),
+    ((1,2,0), CubeElement::WhiteBlue),
+    ((1,2,1), CubeElement::White),
+    ((1,2,2), CubeElement::WhiteGreen),
+    ((2,0,0), CubeElement::YellowBlueOrange),
+    ((2,0,1), CubeElement::YellowOrange),
+    ((2,0,2), CubeElement::YellowOrangeGreen),
+    ((2,1,0), CubeElement::OrangeBlue),
+    ((2,1,1), CubeElement::Orange),
+    ((2,1,2), CubeElement::OrangeGreen),
+    ((2,2,0), CubeElement::WhiteBlueOrange),
+    ((2,2,1), CubeElement::WhiteOrange),
+    ((2,2,2), CubeElement::WhiteOrangeGreen)
+];
+
 /// CubeModel is thought to model the Rubik's cube with (0,0,0) being the yellow-red-blue vertix.
 /// The x-axis is from Red to Orange (left to right)
 /// The y-axis is from Yellow to White (bottom to top)
@@ -15,6 +45,10 @@ impl CubeModel {
         Self {
             cube_elements: loader.to_model_elements(),
         }
+    }
+
+    pub fn cube_elements(&self) -> &[[[CubeElement; 3]; 3]; 3] {
+        &self.cube_elements
     }
 
     pub fn right_clockwise(&mut self) {
@@ -184,6 +218,17 @@ impl CubeModel {
         self.cube_elements[2][1][2] = self.cube_elements[1][2][2];
         self.cube_elements[1][2][2] = temp;
     }
+
+    pub fn solved() -> Self {
+        let mut cube_elements = [[[CubeElement::White; 3]; 3]; 3];
+        SOLVED_INDEX_MAP.map(|((x, y, z), el)| cube_elements[x][y][z] = el);
+        Self { cube_elements }
+    }
+
+    pub fn is_solved(&self) -> bool {
+        let solved = Self::solved();
+        self.cube_elements == solved.cube_elements
+    }
 }
 
 impl Display for CubeModel {
@@ -204,6 +249,16 @@ impl Display for CubeModel {
         result.push_str("\n");
         f.write_str(&result)
     }
+}
+
+#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
+pub enum TileColor {
+    White,
+    Orange,
+    Green,
+    Red,
+    Blue,
+    Yellow,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -235,6 +290,72 @@ pub enum CubeElement {
     Blue,
     Yellow,
     Kernel,
+}
+
+impl CubeElement {
+    pub fn to_tile_colors(&self) -> Vec<TileColor> {
+        match self {
+            CubeElement::WhiteOrangeGreen => vec![
+                TileColor::White,
+                TileColor::Orange,
+                TileColor::Green,
+            ],
+            CubeElement::WhiteBlueOrange => vec![
+                TileColor::White,
+                TileColor::Blue,
+                TileColor::Orange,
+            ],
+            CubeElement::WhiteGreenRed => vec![
+                TileColor::White,
+                TileColor::Green,
+                TileColor::Red,
+            ],
+            CubeElement::WhiteRedBlue => vec![
+                TileColor::White,
+                TileColor::Red,
+                TileColor::Blue,
+            ],
+            CubeElement::YellowOrangeGreen => vec![
+                TileColor::Yellow,
+                TileColor::Orange,
+                TileColor::Green,
+            ],
+            CubeElement::YellowBlueOrange => vec![
+                TileColor::Yellow,
+                TileColor::Blue,
+                TileColor::Orange,
+            ],
+            CubeElement::YellowGreenRed => vec![
+                TileColor::Yellow,
+                TileColor::Green,
+                TileColor::Red,
+            ],
+            CubeElement::YellowRedBlue => vec![
+                TileColor::Yellow,
+                TileColor::Red,
+                TileColor::Blue,
+            ],
+            CubeElement::WhiteOrange => vec![TileColor::White, TileColor::Orange],
+            CubeElement::WhiteGreen => vec![TileColor::White, TileColor::Green],
+            CubeElement::WhiteRed => vec![TileColor::White, TileColor::Red],
+            CubeElement::WhiteBlue => vec![TileColor::White, TileColor::Blue],
+            CubeElement::YellowOrange => vec![TileColor::Yellow, TileColor::Orange],
+            CubeElement::YellowGreen => vec![TileColor::Yellow, TileColor::Green],
+            CubeElement::YellowRed => vec![TileColor::Yellow, TileColor::Red],
+            CubeElement::YellowBlue => vec![TileColor::Yellow, TileColor::Blue],
+            CubeElement::RedBlue => vec![TileColor::Red, TileColor::Blue],
+            CubeElement::RedGreen => vec![TileColor::Red, TileColor::Green],
+            CubeElement::OrangeBlue => vec![TileColor::Orange, TileColor::Blue],
+            CubeElement::OrangeGreen => vec![TileColor::Orange, TileColor::Green],
+            CubeElement::White => vec![TileColor::White],
+            CubeElement::Orange => vec![TileColor::Orange],
+            CubeElement::Green => vec![TileColor::Green],
+            CubeElement::Red => vec![TileColor::Red],
+            CubeElement::Blue => vec![TileColor::Blue],
+            CubeElement::Yellow => vec![TileColor::Yellow],
+            CubeElement::Kernel => vec![],
+        }
+    }
 }
 
 impl Display for CubeElement {
@@ -279,12 +400,7 @@ mod tests {
     use std::path::PathBuf;
 
     fn load_solved_cube() -> CubeModel {
-        // get the path of the file
-        let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("assets")
-            .join("solved_cube.txt");
-        let loader = CubeTextLoader::from_file(path.as_path());
-        CubeModel::from_loader(loader)
+        CubeModel::solved()
     }
 
     mod actions {
@@ -476,4 +592,5 @@ mod tests {
             println!("{}", cube);
         }
     }
+
 }

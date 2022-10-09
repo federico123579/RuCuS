@@ -1,18 +1,8 @@
-use crate::core::CubeElement;
+use crate::core::{CubeElement, TileColor};
 use std::{fs::read_to_string, path::Path};
 
 pub trait CubeLoader {
     fn to_model_elements(self) -> [[[CubeElement; 3]; 3]; 3];
-}
-
-#[derive(Clone, Copy, PartialEq, PartialOrd, Eq, Ord)]
-enum TileColor {
-    White,
-    Orange,
-    Green,
-    Red,
-    Blue,
-    Yellow,
 }
 
 /// This enum is used in the hand-crafter map of tiles to CubeElements.
