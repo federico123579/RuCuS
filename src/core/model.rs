@@ -261,7 +261,7 @@ pub enum TileColor {
     Yellow,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CubeElement {
     WhiteOrangeGreen,
     WhiteBlueOrange,

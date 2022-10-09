@@ -10,7 +10,7 @@ use std::path::PathBuf;
 
 fn make_a_100_random_moves_model() -> CubeModel {
     let mut cube = CubeModel::solved();
-    for _ in 0..10 {
+    for _ in 0..15 {
         let random_move = all::<Actions>()
             .collect::<Vec<Actions>>()
             .choose(&mut rand::thread_rng())

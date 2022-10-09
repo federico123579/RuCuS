@@ -1,167 +1,113 @@
 use super::state_space::CubeState;
 use crate::core::SOLVED_INDEX_MAP;
 
-trait MoveDistance {
-    fn move_distance(&self) -> usize;
+trait ExpectedMoves {
+    fn expected_move_distance(&self) -> f64;
 }
 
-trait MisplacedTiles {
-    fn misplaced_tiles(&self) -> usize;
+impl ExpectedMoves for CubeState {
+    fn expected_move_distance(&self) -> f64 {
+        let mut distance = 0.;
+        let elems = self.model.cube_elements();
+        for i in 0..3 {
+            for j in 0..3 {
+                for k in 0..3 {
+                    let index = (i, j, k);
+                    let cubie = elems[i][j][k];
+                    // get the index of cubie in SOLVED_INDEX_MAP
+                    let solved_index = SOLVED_INDEX_MAP
+                        .iter()
+                        .filter(|(_, x)| *x == cubie)
+                        .map(|(x, _)| x)
+                        .next()
+                        .unwrap();
+                    // calculate the distance
+                    let mut temp_distance = 0;
+                    let (x, y, z) = *solved_index;
+                    // handles the case where the cubie is in the right place
+                    if index == (x, y, z) {
+                        continue;
+                    }
+                    // handles the cases of vertex and edge cubies
+                    if x != 1 && y != 1 && z != 1 {        // vertex cubie
+                        if i != x && j != y && k != z {
+                            temp_distance += 3;
+                        } else if i == x && j == y || i == x && k == z || j == y && k == z {
+                            temp_distance += 1;
+                        } else {
+                            temp_distance += 2;
+                        }
+                    } else if x == 1 || y == 1 || z == 1 { // edge cubie
+                        if i == x && j == y  || i == x && k == z || j == y && k == z {
+                            temp_distance += 2;
+                        } else if i == x && j != y && k != z || j == y && i != x && k != z || k == z && i != x && j != y {
+                            temp_distance += 4;
+                        } else {
+                            temp_distance += 1;
+                        }
+                    }
+                    distance += temp_distance as f64 / 8.0;
+                }
+            }
+        }
+        distance
+    }
 }
 
-trait ColorDistance {
-    fn color_distance(&self) -> usize;
+pub trait ManhattanDistance {
+    fn manhattan_distance(&self) -> f64;
+}
+
+impl ManhattanDistance for CubeState {
+    fn manhattan_distance(&self) -> f64 {
+        let mut distance = 0.;
+        let elems = self.model.cube_elements();
+        for i in 0..3 {
+            for j in 0..3 {
+                for k in 0..3 {
+                    let index = (i, j, k);
+                    let cubie = elems[i][j][k];
+                    // get the index of cubie in SOLVED_INDEX_MAP
+                    let solved_index = SOLVED_INDEX_MAP
+                        .iter()
+                        .filter(|(_, x)| *x == cubie)
+                        .map(|(x, _)| x)
+                        .next()
+                        .unwrap();
+                    // calculate the manhattan distance
+                    let mut vertex_distance = 0;
+                    let mut edge_distance = 0;
+                    let (x, y, z) = *solved_index;
+                    // handles the case where the cubie is in the right place
+                    if index == (x, y, z) {
+                        continue;
+                    }
+                    // handles the cases of vertex and edge cubies
+                    if x != 1 && y != 1 && z != 1 {        // vertex cubie
+                        vertex_distance += (i as i32 - x as i32).abs();
+                        vertex_distance += (j as i32 - y as i32).abs();
+                        vertex_distance += (k as i32 - z as i32).abs();
+                    } else if x == 1 || y == 1 || z == 1 { // edge cubie
+                        edge_distance += (i as i32 - x as i32).abs();
+                        edge_distance += (j as i32 - y as i32).abs();
+                        edge_distance += (k as i32 - z as i32).abs();
+                    }
+                    distance += vertex_distance as f64 / 4.0 + edge_distance as f64 / 4.0;
+                }
+            }
+        }
+        distance
+    }
 }
 
 pub trait Heuristic {
-    fn heuristic(&self) -> usize;
-}
-
-impl MoveDistance for CubeState {
-    fn move_distance(&self) -> usize {
-        let elements = self.elements();
-        let mut distance = 0;
-        for i in 0..3 {
-            for j in 0..3 {
-                for k in 0..3 {
-                    let element = elements[i][j][k];
-                    let index = SOLVED_INDEX_MAP.iter().filter(|(_, e)| *e == element).next().unwrap().0;
-                    let (l, m, n) = index;
-                    distance += (i as isize - l as isize).abs() as usize;
-                    distance += (j as isize - m as isize).abs() as usize;
-                    distance += (k as isize - n as isize).abs() as usize;
-                }
-            }
-        }
-        distance
-    }
-}
-
-impl MisplacedTiles for CubeState {
-    fn misplaced_tiles(&self) -> usize {
-        let elements = self.elements();
-        let mut distance = 0;
-        for i in 0..3 {
-            for j in 0..3 {
-                for k in 0..3 {
-                    let element = elements[i][j][k];
-                    let index = SOLVED_INDEX_MAP.iter().filter(|(_, e)| *e == element).next().unwrap().0;
-                    let (l, m, n) = index;
-                    if i != l || j != m || k != n {
-                        distance += 1;
-                    }
-                }
-            }
-        }
-        distance
-    }
-}
-
-impl ColorDistance for CubeState {
-    fn color_distance(&self) -> usize {
-        let elements = self.elements();
-        let mut distance = 0;
-        for i in 0..3 {
-            for j in 0..3 {
-                for k in 0..3 {
-                    let element = elements[i][j][k];
-                    let index = SOLVED_INDEX_MAP.iter().filter(|(_, e)| *e == element).next().unwrap().0;
-                    let (l, m, n) = index;
-                    if i != l {
-                        distance += 1;
-                    }
-                    if j != m {
-                        distance += 1;
-                    }
-                    if k != n {
-                        distance += 1;
-                    }
-                }
-            }
-        }
-        distance
-    }
-}
-
-trait ColorDisparity {
-    fn color_disparity(&self) -> usize;
-}
-
-impl ColorDisparity for CubeState {
-    fn color_disparity(&self) -> usize {
-        let elements = self.elements();
-        let mut same_color_neighbors = 0;
-        for i in 0..3 {
-            for j in 0..3 {
-                for k in 0..3 {
-                    let element = elements[i][j][k];
-                    let colors = element.to_tile_colors();
-                    // check if the element has neighbors with the same color
-                    if i > 0 {
-                        let other_elements = elements[i - 1][j][k];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                    if i < 2 {
-                        let other_elements = elements[i + 1][j][k];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                    if j > 0 {
-                        let other_elements = elements[i][j - 1][k];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                    if j < 2 {
-                        let other_elements = elements[i][j + 1][k];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                    if k > 0 {
-                        let other_elements = elements[i][j][k - 1];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                    if k < 2 {
-                        let other_elements = elements[i][j][k + 1];
-                        let other_colors = other_elements.to_tile_colors();
-                        for color in colors.iter() {
-                            if other_colors.contains(color) {
-                                same_color_neighbors += 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        same_color_neighbors
-    }
+    fn heuristic(&self) -> f64;
 }
 
 impl Heuristic for CubeState {
-    fn heuristic(&self) -> usize {
-        // self.misplaced_tiles() + self.move_distance() + self.color_distance()
-        // self.misplaced_tiles() + self.color_distance()
-        self.color_disparity() + self.misplaced_tiles()
+    fn heuristic(&self) -> f64 {
+        // self.expected_move_distance()
+        // self.manhattan_distance()
+        (self.manhattan_distance() + self.expected_move_distance()) / 2.0
     }
 }

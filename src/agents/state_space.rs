@@ -2,17 +2,19 @@ use super::action::{Actionable, Actions};
 use super::heuristic::Heuristic;
 use crate::core::{CubeElement, CubeLoader, CubeModel};
 use core::mem::size_of;
+use std::hash::Hash;
 use enum_iterator::all;
-use std::{cmp::Reverse, collections::BinaryHeap};
+use std::{cmp::Reverse, collections::BinaryHeap, collections::HashSet};
 
 // const STATE_SPACE_MEMORY_BOUND: f64 = 1e4;
-const STATE_SPACE_BOUND: f64 = 1e6;
+const STATE_SPACE_BOUND: f64 = 1e7;
+const W: f64 = 2.0;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CubeState {
     pub model: CubeModel,
     path_cost: Option<usize>,
-    heuristic_cost: Option<usize>,
+    heuristic_cost: Option<f64>,
     actions_taken: Vec<Actions>,
     visited: bool,
 }
@@ -62,7 +64,7 @@ impl CubeState {
         self.path_cost = Some(cost);
     }
 
-    fn set_heuristic_cost(&mut self, cost: usize) {
+    fn set_heuristic_cost(&mut self, cost: f64) {
         self.heuristic_cost = Some(cost);
     }
 
@@ -73,17 +75,29 @@ impl CubeState {
 
 impl PartialOrd for CubeState {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
-        let self_cost = self.path_cost? + self.heuristic_cost?;
+        let self_cost = self.path_cost? as f64 + self.heuristic_cost? * W;
         // let self_cost = self.heuristic_cost?;
-        let other_cost = other.path_cost? + other.heuristic_cost?;
+        let other_cost = other.path_cost? as f64 + other.heuristic_cost? * W;
         // let other_cost = other.heuristic_cost?;
-        Some(self_cost.cmp(&other_cost))
+        self_cost.partial_cmp(&other_cost)
     }
 }
 
 impl Ord for CubeState {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.partial_cmp(other).unwrap()
+    }
+}
+
+impl Hash for CubeState {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        for i in 0..3 {
+            for j in 0..3 {
+                for k in 0..3 {
+                    self.elements()[i][j][k].hash(state);
+                }
+            }
+        }
     }
 }
 
@@ -97,6 +111,7 @@ impl Actionable for CubeState {
 pub struct StateSpace {
     goal_state: CubeState,
     frontier: BinaryHeap<Reverse<CubeState>>,
+    visited: HashSet<CubeState>,
 }
 
 impl StateSpace {
@@ -104,17 +119,19 @@ impl StateSpace {
         let mut heap = BinaryHeap::new();
         let mut root = initial_state.clone();
         root.set_path_cost(0);
-        root.set_heuristic_cost(100);
+        root.set_heuristic_cost(100.);
         heap.push(Reverse(root));
 
         Self {
             goal_state,
             frontier: heap,
+            visited: HashSet::new(),
         }
     }
 
     fn add_to_frontier(&mut self, state: CubeState) {
-        self.frontier.push(Reverse(state));
+        self.frontier.push(Reverse(state.clone()));
+        self.visited.insert(state);
     }
 
     fn prune_frontier(&mut self) {
@@ -122,21 +139,22 @@ impl StateSpace {
         // let mut visited = Vec::new();
         // let state_bound = STATE_SPACE_MEMORY_BOUND / size_of::<CubeState>() as f64;
 
-        if self.frontier.len() > (STATE_SPACE_BOUND * 2.0) as usize {
-            let state_bound = STATE_SPACE_BOUND;
-            let mut state_remaining = state_bound as usize;
-            let old_front = self.frontier.clone();
-            self.frontier = BinaryHeap::with_capacity(state_remaining);
-            old_front.into_sorted_vec()
-                .iter()
-                .rev()
-                .for_each(|Reverse(state)| {
-                    if state_remaining > 0 {
-                        self.frontier.push(Reverse(state.clone()));
-                        state_remaining -= 1;
-                    }
-                });
-        }
+        // if self.frontier.len() > (STATE_SPACE_BOUND * 2.0) as usize {
+        //     let state_bound = STATE_SPACE_BOUND;
+        //     let mut state_remaining = state_bound as usize;
+        //     let old_front = self.frontier.clone();
+        //     self.frontier = BinaryHeap::with_capacity(state_remaining);
+        //     old_front.into_sorted_vec()
+        //         .iter()
+        //         .rev()
+        //         .for_each(|Reverse(state)| {
+        //             if state_remaining > 0 {
+        //                 self.frontier.push(Reverse(state.clone()));
+        //                 state_remaining -= 1;
+        //             }
+        //         });
+        // }
+
         // while let Some(Reverse(state)) = self.frontier.pop() {
         //     if !visited.contains(&state) {
         //         visited.push(state.clone());
@@ -173,6 +191,9 @@ impl StateSpace {
         let promising_s_path_cost = promising_s.path_cost.unwrap();
         for successor in successors {
             let mut new_state = successor.clone();
+            if self.visited.contains(&successor) {
+                continue;
+            }
             new_state.set_path_cost(promising_s_path_cost + 1);
             new_state.update_heristic_cost();
             self.add_to_frontier(new_state);
@@ -185,10 +206,10 @@ impl StateSpace {
             self.expand_frontier();
             println!("Frontier size: {}", self.frontier.len());
             let Reverse(min_s) = self.frontier.peek().unwrap();
-            println!("Frontier min: {}-{}", min_s.path_cost.unwrap(), min_s.heuristic_cost.unwrap());
-            println!("Contour: {}", min_s.path_cost.unwrap() + min_s.heuristic_cost.unwrap());
+            println!("Frontier min: {}-{}", min_s.path_cost.unwrap(), min_s.heuristic_cost.unwrap() * W);
+            println!("Contour: {}", min_s.path_cost.unwrap() as f64 + min_s.heuristic_cost.unwrap() * W);
             if let Some(Reverse(state)) = self.frontier.peek() {
-                if state.heuristic_cost.unwrap() == 0 {
+                if state.heuristic_cost.unwrap() == 0. {
                     return Some(state.actions_taken.clone());
                 }
             }
